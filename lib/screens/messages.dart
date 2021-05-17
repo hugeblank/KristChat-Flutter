@@ -72,16 +72,13 @@ class MessagesState extends State<Messages> {
                     return snapshot.data[index].build(context);
                   } else if (msgs.hasMore) {
                     return Padding (
-                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Center(
                         child: CircularProgressIndicator()
                       )
                     );
                   } else {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: Center(child: Text('nothing more to load!')),
-                    );
+                    return null;
                   }
                 }
               ),

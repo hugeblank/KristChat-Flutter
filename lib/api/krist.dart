@@ -15,6 +15,7 @@ class Transaction {
   String time;
   String channel;
   Map<String, String> metadata;
+  bool epoch;
 
   Transaction(var info) {
       this.id = info['id'];
@@ -24,6 +25,7 @@ class Transaction {
       this.amount = info['value'];
       this.channel = info['sent_name'] == null ? null : (info['sent_name'].toString() + ".kst");
       this.metadata = deserializePost(info['metadata']);
+      this.epoch = this.id == 1919486;
 
       // Time string logic
       // Uniquely cursed
@@ -274,7 +276,7 @@ Map<String, String> deserializePost(String meta) {
         try {
           int.parse(out["ref"]);
         } catch (e) {
-          print("Handling gracefully");
+          print(e.toString() + "Handling gracefully");
           return null;
         }
     }

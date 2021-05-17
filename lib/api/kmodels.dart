@@ -77,8 +77,12 @@ class MessagesModel {
     _isLoading = true;
     return getPosts(_channel).then((txdata) {
       _isLoading = false;
-      _data.addAll(txdata);
-      hasMore = true;
+      _data.addAll(txdata);// Epoch
+      for (int i = 0; i < txdata.length; i++) {
+        if (hasMore) {
+          hasMore = !txdata[i].epoch;
+        }
+      }
       _controller.add(_data);
     });
   }

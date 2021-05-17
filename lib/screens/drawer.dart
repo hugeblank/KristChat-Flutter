@@ -39,21 +39,6 @@ class MainDrawer extends StatelessWidget {
             )),
           ),
           ListTile(
-            leading: Icon(Icons.message),
-            title: Text('Channels'),
-            onTap: (){
-              Navigator.of(context).popAndPushNamed("/messages");
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.account_circle),
-            title: Text('Profile'),
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-          ),
-          ListTile(
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: (){

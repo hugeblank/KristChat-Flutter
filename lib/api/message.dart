@@ -82,8 +82,8 @@ class Message {
       child: Container(
         color: Colors.white,
         alignment: Alignment.centerLeft,
-        margin: EdgeInsets.all(4),
-        padding: EdgeInsets.all(4),
+        margin: EdgeInsets.only(top:4,left:4),
+        padding: EdgeInsets.only(top:4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

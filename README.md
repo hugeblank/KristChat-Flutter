@@ -21,3 +21,18 @@ Log in screen with on-the-fly address resolution:
 Quickly Post thoughts... or burn your krist if the backend is down:
 
 ![image](https://user-images.githubusercontent.com/16393543/118529480-68b88580-b6f8-11eb-9e3a-3589006b7bc2.png)
+
+## To-Do
+
+- Krist API done in Dart - core done
+- ~~Single Profile Log in~~ - done
+- ~~Profile Screen~~ - simplified
+- ~~Messages Screen~~ - done
+- Channel Screen
+- Reply to messages
+- Multi Profile Log in
+- Address Book Screen
+- Krist API caches transactions locally - incomplete
+- ~~Drag down to refresh feed feature in Messages Screen~~ - done
+- Store log in credentials
+- Allow raw privatekey

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:kristchat/main.dart';
 import 'package:kristchat/screens/messages.dart';

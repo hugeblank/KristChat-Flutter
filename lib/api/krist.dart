@@ -65,6 +65,7 @@ class Transaction {
 class Address {
   String address;
   String pkey;
+  int balance;
 
   Address (String address, String pkey) {
     this.address = address;
@@ -72,6 +73,10 @@ class Address {
   }
 
   Future<int> getBalance() async {
+    if (this.balance != null) {
+      print("skip!");
+      return balance;
+    }
     try {
       // Await the http get response, then decode the json-formatted response.
       var response = await http.get(Uri.https(root, '/addresses/$address'));
@@ -79,6 +84,7 @@ class Address {
         var info = jsonDecode(response.body) as Map<String, dynamic>;
         if (info['ok']) {
           var addr = info['address'];
+          this.balance = addr['balance'];
           return addr['balance'];
         }
       }
@@ -100,6 +106,9 @@ class Address {
       if (response.statusCode == 200) {
         var info = jsonDecode(response.body) as Map<String, dynamic>;
         if (info['ok']) {
+          if (balance != null) {
+            balance--;
+          }
           var txn = info['transaction'];
           state.showSnackBar(SnackBar(
               content: Text("Sent post! id: " + txn['id'].toString())

@@ -72,9 +72,26 @@ class Address {
     this.pkey = pkey;
   }
 
+  Future<void> authenticate() async {
+    try {
+      // Await the http get response, then decode the json-formatted response.
+      var response = await http.post(Uri.https(root, '/login'), body: {
+        "privatekey": pkey
+      });
+      if (response.statusCode == 200) {
+        var info = jsonDecode(response.body) as Map<String, dynamic>;
+        if (info['ok']) {
+          return;
+        }
+      }
+      throw("Cannot authenticate $address");
+    } catch (e) {
+      throw(e);
+    }
+  }
+
   Future<int> getBalance() async {
     if (this.balance != null) {
-      print("skip!");
       return balance;
     }
     try {
@@ -90,7 +107,12 @@ class Address {
       }
       throw("Cannot get balance from address $address");
     } catch (e) {
-      throw(e);
+      try {
+        await authenticate();
+        return await getBalance();
+      } catch (e2) {
+        throw(e2);
+      }
     }
   }
 
@@ -184,9 +206,8 @@ class Address {
                   ),
                   Text(
                     address,
-                    textScaleFactor: 1,
+                    textScaleFactor: 1.1,
                     style: TextStyle(
-                      fontSize: 18,
                       color: Colors.white
                     ),
                   ),
@@ -201,6 +222,7 @@ class Address {
                 ]
             );
           } else if (snapshot.hasError) {
+            print(snapshot.error);
             out = Icon(
                 Icons.error_outline,
                 color: Colors.red

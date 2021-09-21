@@ -3,22 +3,24 @@ import 'package:kristchat/api/kmodels.dart';
 import 'package:kristchat/api/krist.dart';
 import 'package:kristchat/api/route.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:kristchat/main.dart';
 import 'package:kristchat/screens/drawer.dart';
 
-class Messages extends StatefulWidget {
-
-  Messages({Key key}) : super(key: key);
+class MessagesPage extends HomePage {
+  MessagesPage({Key key}) : super(key: key);
 
   @override
-  MessagesState createState() => MessagesState();
+  State createState() {
+      return Messages();
+  }
 }
 
-class MessagesState extends State<Messages> {
+class Messages extends State<HomePage> {
   String title = "KristChat";
   String channel = RouteHandler.channel;
   Address address = RouteHandler.address;
 
-  MessagesState();
+  Messages();
 
   MessagesModel msgs;
   ScrollController _sctrl = ScrollController();
@@ -52,7 +54,7 @@ class MessagesState extends State<Messages> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.chat_outlined),
         onPressed: () => {
-          Navigator.of(context).pushNamed('/post')
+          Navigator.of(context).pushReplacementNamed('/post')
         },
       ),
       body: StreamBuilder(

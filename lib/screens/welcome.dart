@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kristchat/api/route.dart';
 import 'package:kristchat/main.dart';
 import 'package:kristchat/api/krist.dart' as krist;
 
 import 'messages.dart';
 
-class Welcome extends State<MyHomePage> {
+class Welcome extends State<HomePage> {
   String address = "";
   void updateAddress(String addr) {
     setState(() {
@@ -16,17 +17,13 @@ class Welcome extends State<MyHomePage> {
   }
 
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
-
-  String title;
-
-  Welcome(String title) {
-    this.title = title;
-  }
+  SharedPreferences prefs;
 
   void submit() {
     if (_formKey.currentState.validate()) {
+      RouteHandler.prefs.setString('pkey', _formKey.currentState.fields['password'].value);
       RouteHandler.address = krist.Address(address, krist.getHashFromKey(_formKey.currentState.fields['password'].value, true));
-      Navigator.of(context).pushNamed("/messages");
+      Navigator.of(context).pushReplacementNamed("/messages");
     }
   }
 

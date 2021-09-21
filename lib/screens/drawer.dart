@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kristchat/api/krist.dart';
 import 'package:kristchat/api/route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 import 'messages.dart';
@@ -42,6 +43,9 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: (){
+              RouteHandler.address = null;
+              RouteHandler.pkey = null;
+              RouteHandler.prefs.remove('pkey');
               Navigator.of(context).popAndPushNamed("/");
             },
           )

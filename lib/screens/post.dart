@@ -37,6 +37,10 @@ class PostState extends State<Post> {
     super.dispose();
   }
 
+  void back() {
+    Navigator.of(context).popAndPushNamed("/messages");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +52,7 @@ class PostState extends State<Post> {
         ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: back,
         )
       ),
       body: Container(
@@ -94,7 +96,7 @@ class PostState extends State<Post> {
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
                           address.makePost(ScaffoldMessenger.of(context), channel, _formKey.currentState.fields['post'].value);
-                          Navigator.of(context).pop();
+                          back();
                         }
                       },
                       child: Text("Post")

@@ -38,7 +38,7 @@ class PostState extends State<Post> {
   }
 
   void back() {
-    Navigator.of(context).popAndPushNamed("/messages");
+    Navigator.of(context).pop();
   }
 
   @override

@@ -54,7 +54,7 @@ class Messages extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.chat_outlined),
         onPressed: () => {
-          Navigator.of(context).pushReplacementNamed('/post')
+          Navigator.of(context).pushNamed('/post')
         },
       ),
       body: StreamBuilder(

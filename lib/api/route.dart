@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:kristchat/main.dart';
 import 'package:kristchat/screens/messages.dart';
 import 'package:kristchat/screens/post.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'krist.dart';
 
 class RouteHandler {
   static String current = '/';
-  static String channel = 'allchat.kst';
-  static Address address;
-  static String pkey;
-  static SharedPreferences prefs;
+  static Map<String, dynamic> args = {
+    'channel': 'allchat.kst'
+  };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     current = settings.name;

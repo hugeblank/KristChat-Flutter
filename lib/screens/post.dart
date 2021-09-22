@@ -19,10 +19,9 @@ class Post extends StatefulWidget {
 }
 
 class PostState extends State<Post> {
-  String channel = RouteHandler.channel;
+  String channel = RouteHandler.args['channel'];
   String title = "New Post";
-  Address address = RouteHandler.address;
-  String pkey = RouteHandler.pkey;
+  Address address = RouteHandler.args['address'];
 
   PostState();
 
@@ -38,6 +37,7 @@ class PostState extends State<Post> {
   }
 
   void back() {
+    RouteHandler.args['ref'] = null;
     Navigator.of(context).pop();
   }
 
@@ -46,7 +46,7 @@ class PostState extends State<Post> {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
-        title: Text(this.title + " to " + channel),
+        title: Text(this.title + " to " + this.channel),
         actions: [
           address.buildTrailingThumb(context)
         ],
@@ -94,8 +94,8 @@ class PostState extends State<Post> {
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          address.makePost(ScaffoldMessenger.of(context), channel, _formKey.currentState.fields['post'].value);
+                        if (this._formKey.currentState.validate()) {
+                          this.address.makePost(ScaffoldMessenger.of(context), this.channel, this._formKey.currentState.fields['post'].value, ref: RouteHandler.args['ref']);
                           back();
                         }
                       },

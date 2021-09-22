@@ -5,12 +5,13 @@ import 'package:kristchat/screens/messages.dart';
 import 'package:kristchat/screens/welcome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  RouteHandler.prefs = await SharedPreferences.getInstance();
-  String pkey = RouteHandler.prefs.getString('pkey');
+  RouteHandler.args['prefs'] = await SharedPreferences.getInstance();
+  String pkey = RouteHandler.args['prefs'].getString('pkey');
   if (pkey != null) {
-    RouteHandler.address = krist.Address(krist.getAddressFromKey(pkey, true), krist.getHashFromKey(pkey, true));
+    RouteHandler.args['address'] = krist.Address(krist.getAddressFromKey(pkey, true), krist.getHashFromKey(pkey, true));
   }
   runApp(MyApp());
 }
@@ -35,7 +36,7 @@ class HomePage extends StatefulWidget {
 
   @override
   State createState() {
-    if (RouteHandler.address != null) {
+    if (RouteHandler.args['address'] != null) {
       return Messages();
     } else {
       return Welcome();

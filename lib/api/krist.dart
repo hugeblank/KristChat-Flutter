@@ -15,6 +15,7 @@ class Transaction {
   String time;
   String channel;
   Map<String, String> metadata;
+  bool epoch;
 
   Transaction(var info) {
       this.id = info['id'];
@@ -24,6 +25,7 @@ class Transaction {
       this.amount = info['value'];
       this.channel = info['sent_name'] == null ? null : (info['sent_name'].toString() + ".kst");
       this.metadata = deserializePost(info['metadata']);
+      this.epoch = this.id == 1919486; // Any messages before this one will not be rendered
 
       // Time string logic
       // Uniquely cursed
@@ -70,9 +72,26 @@ class Address {
     this.pkey = pkey;
   }
 
+  Future<void> authenticate() async {
+    try {
+      // Await the http get response, then decode the json-formatted response.
+      var response = await http.post(Uri.https(root, '/login'), body: {
+        "privatekey": pkey
+      });
+      if (response.statusCode == 200) {
+        var info = jsonDecode(response.body) as Map<String, dynamic>;
+        if (info['ok']) {
+          return;
+        }
+      }
+      throw("Cannot authenticate $address");
+    } catch (e) {
+      throw(e);
+    }
+  }
+
   Future<int> getBalance() async {
     if (this.balance != null) {
-      print("skip!");
       return balance;
     }
     try {
@@ -88,19 +107,25 @@ class Address {
       }
       throw("Cannot get balance from address $address");
     } catch (e) {
-      throw(e);
+      try {
+        await authenticate();
+        return await getBalance();
+      } catch (e2) {
+        throw(e2);
+      }
     }
   }
 
-  void makePost(ScaffoldMessengerState state,  String channel, String text) async {
+  void makePost(ScaffoldMessengerState state,  String channel, String text, {int ref, int amount=1}) async {
     try {
       // Await the http get response, then decode the json-formatted response.
-      var response = await http.post(Uri.https(root, '/transactions'), body: {
+      Map<String, String> body = {
         "privatekey": pkey,
         "to": channel,
-        "amount": "1",
-        "metadata": serializePost(text, null)
-      });
+        "amount": amount.toString(),
+        "metadata": serializePost(text, ref)
+      };
+      var response = await http.post(Uri.https(root, '/transactions'), body: body);
       if (response.statusCode == 200) {
         var info = jsonDecode(response.body) as Map<String, dynamic>;
         if (info['ok']) {
@@ -119,10 +144,6 @@ class Address {
           content: Text("Error Sending Post: " + e.toString())
       ));
     }
-  }
-
-  Future<bool> makeReply(String text, int ref) async {
-    // To-Do: Reply Implementation
   }
 
   Widget buildTrailingThumb(BuildContext context) {
@@ -182,9 +203,8 @@ class Address {
                   ),
                   Text(
                     address,
-                    textScaleFactor: 1,
+                    textScaleFactor: 1.1,
                     style: TextStyle(
-                      fontSize: 18,
                       color: Colors.white
                     ),
                   ),
@@ -199,6 +219,7 @@ class Address {
                 ]
             );
           } else if (snapshot.hasError) {
+            print(snapshot.error);
             out = Icon(
                 Icons.error_outline,
                 color: Colors.red
@@ -270,20 +291,19 @@ Map<String, String> deserializePost(String meta) {
   if (meta == null) {return null;}
   Map<String, String> out = {};
   int params = 0;
-  List<String> splitmeta = meta.split(";");
+  List<String> splitmeta = meta.split(";"); // Break up metadata
   for (int i = 0; i < splitmeta.length; i++) {
-    if (splitmeta[i].indexOf("type=") == 0) {
+    if (splitmeta[i].indexOf("type=") == 0) { // Parse type of post
       out["type"] = splitmeta[i].substring(5);
       params++;
-    } else if (splitmeta[i].indexOf("content=") == 0) {
+    } else if (splitmeta[i].indexOf("content=") == 0) { // Parse content
       out["content"] = splitmeta[i].substring(8);
       params++;
-    } else if (splitmeta[i].indexOf("ref=") == 0) {
+    } else if (splitmeta[i].indexOf("ref=") == 0) { // Parse optional reference
         out["ref"] = splitmeta[i].substring(4);
-        try {
+        try { // Make sure reference can be an int
           int.parse(out["ref"]);
         } catch (e) {
-          print("Handling gracefully");
           return null;
         }
     }

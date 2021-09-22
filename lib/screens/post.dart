@@ -19,10 +19,9 @@ class Post extends StatefulWidget {
 }
 
 class PostState extends State<Post> {
-  String channel = RouteHandler.channel;
+  String channel = RouteHandler.args['channel'];
   String title = "New Post";
-  Address address = RouteHandler.address;
-  String pkey = RouteHandler.pkey;
+  Address address = RouteHandler.args['address'];
 
   PostState();
 
@@ -37,20 +36,23 @@ class PostState extends State<Post> {
     super.dispose();
   }
 
+  void back() {
+    RouteHandler.args['ref'] = null;
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
-        title: Text(this.title + " to " + channel),
+        title: Text(this.title + " to " + this.channel),
         actions: [
           address.buildTrailingThumb(context)
         ],
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: back,
         )
       ),
       body: Container(
@@ -92,9 +94,9 @@ class PostState extends State<Post> {
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          address.makePost(ScaffoldMessenger.of(context), channel, _formKey.currentState.fields['post'].value);
-                          Navigator.of(context).pop();
+                        if (this._formKey.currentState.validate()) {
+                          this.address.makePost(ScaffoldMessenger.of(context), this.channel, this._formKey.currentState.fields['post'].value, ref: RouteHandler.args['ref']);
+                          back();
                         }
                       },
                       child: Text("Post")

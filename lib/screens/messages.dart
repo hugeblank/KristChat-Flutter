@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:kristchat/api/kmodels.dart';
 import 'package:kristchat/api/krist.dart';
+import 'package:kristchat/api/message.dart';
 import 'package:kristchat/api/route.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:kristchat/main.dart';
 import 'package:kristchat/screens/drawer.dart';
 
-class Messages extends StatefulWidget {
-
-  Messages({Key key}) : super(key: key);
+class MessagesPage extends HomePage {
+  MessagesPage({Key key}) : super(key: key);
 
   @override
-  MessagesState createState() => MessagesState();
+  State createState() {
+      return Messages();
+  }
 }
 
-class MessagesState extends State<Messages> {
+class Messages extends State<HomePage> {
   String title = "KristChat";
-  String channel = RouteHandler.channel;
-  Address address = RouteHandler.address;
+  String channel = RouteHandler.args['channel'];
+  Address address = RouteHandler.args['address'];
 
-  MessagesState();
+  Messages();
 
-  MessagesModel msgs;
   ScrollController _sctrl = ScrollController();
 
   @override
   void initState() {
-    msgs = MessagesModel(this.channel);
+    RouteHandler.args['messages'] = MessagesModel(this.channel);
     _sctrl.addListener(() {
       if (_sctrl.position.maxScrollExtent == _sctrl.offset) {
-        msgs.loadMore();
+        RouteHandler.args['messages'].loadMore();
       }
     });
     super.initState();
@@ -36,6 +38,7 @@ class MessagesState extends State<Messages> {
 
   @override
   void dispose() {
+    RouteHandler.args['messages'] = null;
     _sctrl.dispose();
     super.dispose();
   }
@@ -51,12 +54,12 @@ class MessagesState extends State<Messages> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.chat_outlined),
-        onPressed: () => {
-          Navigator.of(context).pushNamed('/post')
+        onPressed: () {
+          Message.startPost(context);
         },
       ),
       body: StreamBuilder(
-        stream: msgs.stream,
+        stream: RouteHandler.args['messages'].stream,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -70,22 +73,19 @@ class MessagesState extends State<Messages> {
                 itemBuilder: (BuildContext context, int index) {
                   if (index < snapshot.data.length) {
                     return snapshot.data[index].build(context);
-                  } else if (msgs.hasMore) {
+                  } else if (RouteHandler.args['messages'].hasMore) {
                     return Padding (
-                      padding: EdgeInsets.symmetric(vertical: 32.0),
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Center(
                         child: CircularProgressIndicator()
                       )
                     );
                   } else {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32.0),
-                      child: Center(child: Text('nothing more to load!')),
-                    );
+                    return null;
                   }
                 }
               ),
-              onRefresh: msgs.refresh
+              onRefresh: RouteHandler.args['messages'].refresh
             );
           }
         },

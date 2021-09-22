@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:kristchat/api/krist.dart';
 import 'package:kristchat/api/route.dart';
 
-import '../main.dart';
-import 'messages.dart';
 // https://www.youtube.com/watch?v=nyvwx7o277U
 class MainDrawer extends StatelessWidget {
-  String title = "KristChat";
-  Address address = RouteHandler.address;
+  final String title = "KristChat";
+  final Address address = RouteHandler.args['address'];
 
   MainDrawer();
 
@@ -42,6 +40,8 @@ class MainDrawer extends StatelessWidget {
             leading: Icon(Icons.logout),
             title: Text('Log out'),
             onTap: (){
+              RouteHandler.args['address'] = null;
+              RouteHandler.args['prefs'].remove('pkey');
               Navigator.of(context).popAndPushNamed("/");
             },
           )

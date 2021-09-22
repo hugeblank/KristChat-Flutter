@@ -81,7 +81,7 @@ class Message {
       ),
     ));
     ref = tx.getRef();
-    if (ref != null && this.depth <= dcolors.length) {
+    if (ref != null && this.depth < dcolors.length) {
       subMsg = Message.subMessage(ref, this.depth + 1);
       Transaction stx = await subMsg.getTransaction();
       if (stx.isPost()) {
